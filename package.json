@@ -1,0 +1,35 @@
+{
+  "name": "enregistrement",
+  "version": "1.0.0",
+  "main": "serveur.js",
+  "scripts": {
+    "start": "node serveur.js",
+    "dev": "nodemon serveur.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NadjlaSefadine/enregistrement.git"
+  },
+  "keywords": [
+    "node.js",
+    "backend",
+    "express",
+    "postman"
+  ],
+  "author": "Nadjla-hissein-ahmat-salima",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NadjlaSefadine/enregistrement/issues"
+  },
+  "homepage": "https://github.com/NadjlaSefadine/enregistrement#readme",
+  "description": "enregistrement et authentification des utilisateurs vie une API REST",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.5",
+    "nodemon": "^3.1.10"
+  }
+}
