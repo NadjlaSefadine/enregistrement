@@ -2,29 +2,31 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
-const studentRouter = require("./routers/studentRouter");
+const productRouter = require("./routers/productRouter");
+const userRouter = require ("./routers/userRouter");
 
-const app = express();
-const PORT = process.env.PORT;
+const serveur = express();
+const port = process.env.port;
 
 // Connect to MongoDB database
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Successfully connected to database");
+    console.log("La connexion est établie avec succès.");
   })
   .catch((error) => {
     console.error(error);
   });
 
 // Middleware to handle any json payload data sent from a client
-app.use(express.json());
+serveur.use(express.json());
 
 // Routes
 
-app.use("/students", studentRouter);
+serveur.use("/products", productRouter);
+serveur.use("/users", userRouter);
 
 // Expose the server on the defined port
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+serveur.listen(port, () => {
+  console.log(`Le serveur est demarré sur le  port ${port}.`);
 });
