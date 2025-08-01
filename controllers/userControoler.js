@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const userModel = require("../models/userModel");
 const genererNombreAleatoire = require("../utils/generateOTP");
@@ -93,27 +94,35 @@ const verify = async (req, res) => {
     })
 }
 
-const login = async(req, res) =>{
-  const {email, password} = req.body;
-  const user = await userModel.findOne({email});
-  if (user) {
-    res.status(401).send({
-        message: "User not found"
-    });
+const login = async (req, res) => {
+  // console.log(req.body);
+  const { email, password } = req.body;
+  
+  const user = await userModel.findOne({ email });
+  // console.log(user);
+  if (!user) {
+    res.status(404).send({ message: "user not found" });
     return;
   }
-  const isPasswodCorrect = bcrypt.compareSync(password, user.password);
-  if (isPasswodCorrect) {
-    res.status(401).send({
-        message: "invalid credentials"
-    });
+  const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+  if (!isPasswordCorrect) {
+    res.status(401).send({ message: "invalid credentials" });
     return;
   }
-  const token = jwt.sign({foo: "bar"}, "123"  );
-    console.log(token);
-    return;
-    
+  // console.log(isPasswordCorrect);
 
-}
+  const token = jwt.sign(
+    {
+      userId: user._id,
+      email: user.email
+    },
+    process.env.WT_SECRET
+  );
+  // console.log(token);
+  res.send({
+    message: "user connect successfully",
+    token
+  });
+};
 
 module.exports = { register, login, verify }

@@ -1,6 +1,6 @@
 const productModel = require("..//models/productModel");
 
-// Get all products
+// L'affichage de tous les produits dans la base de données
 const getProducts = async (req, res) => {
   const products = await Model.find();
 
@@ -9,11 +9,12 @@ const getProducts = async (req, res) => {
   });
 };
 
-// Get a single product by its ID
+// L'affichage d'un produit par son id
 const getSingleProduct = async (req, res) => {
   const id = req.params.id;
 
-  const product = await productModel.findById(id); // .find({_id: sproductId})
+  const product = await productModel.findById(id); 
+  
 
   if (!product) {
     res.status(404).send({
@@ -25,10 +26,9 @@ const getSingleProduct = async (req, res) => {
   res.send({ product });
 };
 
-// Add a new products
+// L'ajout d'un nouveau produit
 const addProduct = async (req, res) => {
   const product = req.body;
-  //   console.log(product);
 
   try {
     await productModel.create(product);
@@ -45,7 +45,7 @@ const addProduct = async (req, res) => {
   });
 };
 
-// Update a product
+// La mise à jour d'un produit
 const updateProduct = async (req, res) => {
   const id = req.params.id;
   const { name, age } = req.body;
@@ -75,7 +75,7 @@ const PORT = process.env.PORT;
   });
 };
 
-// Delete a product
+// La suppression d'un produit par son id
 const deletedeProduct = async (req, res) => {
   const id = req.params.id;
 
@@ -92,6 +92,8 @@ const deletedeProduct = async (req, res) => {
     deletedeProduct,
   });
 };
+
+// exporation de toutes les methodes
 
 module.exports = {
   getProducts,
