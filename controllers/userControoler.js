@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userModel = require("../models/userModel");
 const genererNombreAleatoire = require("../utils/generateOTP");
@@ -92,4 +93,27 @@ const verify = async (req, res) => {
     })
 }
 
-module.exports = { register, verify }
+const login = async(req, res) =>{
+  const {email, password} = req.body;
+  const user = await userModel.findOne({email});
+  if (user) {
+    res.status(401).send({
+        message: "User not found"
+    });
+    return;
+  }
+  const isPasswodCorrect = bcrypt.compareSync(password, user.password);
+  if (isPasswodCorrect) {
+    res.status(401).send({
+        message: "invalid credentials"
+    });
+    return;
+  }
+  const token = jwt.sign({foo: "bar"}, "123"  );
+    console.log(token);
+    return;
+    
+
+}
+
+module.exports = { register, login, verify }
