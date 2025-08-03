@@ -3,10 +3,10 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const userModel = require("../models/userModel");
-const genererNombreAleatoire = require("../utils/generateOTP");
+const genererNombreAleatoire = require("../utlis/generateOTP");
 const { v4 } = require("uuid");
 const otpModel = require("../models/otpModel");
-const transporter  = require("../utils/mailTransporter");
+const transporter  = require("../utlis/mailTransporter");
 
 const register = async (req, res) => {
     const { name, email, password } = req.body;

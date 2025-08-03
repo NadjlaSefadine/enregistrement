@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 
-const studentRouter = require("./routers/studentRouter");
+const studentRouter = require("./routers/productRouter");
 
 const app = express();
 const PORT = process.env.PORT;

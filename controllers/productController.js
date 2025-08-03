@@ -1,8 +1,8 @@
-const productModel = require("..//models/productModel");
+const productModel = require("../models/productModel");
 
 // L'affichage de tous les produits dans la base de données
 const getProducts = async (req, res) => {
-  const products = await Model.find();
+  const products = await productModel.find();
 
   res.send({
     products,
