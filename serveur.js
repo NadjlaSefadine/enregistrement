@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const studentRouter = require("./routers/productRouter");
+const userRouter = require("./routers/userRouter");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -23,6 +24,7 @@ app.use(express.json());
 // Routes
 
 app.use("/students", studentRouter);
+app.use("/users", userRouter);
 
 // Expose the server on the defined port
 app.listen(PORT, () => {
