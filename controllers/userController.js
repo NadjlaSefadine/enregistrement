@@ -1,10 +1,12 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const userModel = require("../models/userModel");
-const generateOTP = require("../utils/generateOTP");
+const genererNombreAleatoire = require("../utlis/generateOTP");
 const { v4 } = require("uuid");
 const otpModel = require("../models/otpModel");
-const transporter = require("../utils/mailTransporter");
+const transporter  = require("../utils/mailTransporter");
 
 const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -24,11 +26,12 @@ const register = async (req, res) => {
     }
     catch (error) {
         res.send({
-            message: ('l utilisateur n est pas ajouté')
+            message: ("l'utilisateur n'est pas ajouté")
         });
         return;
     };
-    const otp = generateOTP();
+
+    const otp = genererNombreAleatoire();
     const otpToken = v4();
 
     const otpDetails = await otpModel.create({
@@ -39,24 +42,25 @@ const register = async (req, res) => {
     });
 
     transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: user.email,
-        subject: "Verification email",
-        html: `
-        <h1>Verification email</h1>
-        <div>
-            Use the above code to verify your email:<br>
-            <strong>${otp}</strong>
-        </div>
-        `
-    })
+    from: process.env.EMAIL_USER,
+    to: user.email,
+    subject: "Verification email.",
+    html: `
+    <h1> Verification email</h1>
+    <div> 
+        Use the above  code to verify your email <br>
+        <strong>${otp}</strong>
+    </div>
+    `
+})
 
     res.send({
-        message: ('l utilisateur est ajouté '),
+        message: ("l'utilisateur est ajouté"),
         otpToken,
         user
     });
 };
+
 const verify = async (req, res) => {
     const { otp, otpToken, purpose } = req.body;
 
@@ -84,12 +88,105 @@ const verify = async (req, res) => {
         { new: true }
     );
 
-
-
-
     res.send({
-        message: "user verified successfully",
-        user: verifiedUser
-    });
+        message: "user successfuly verified",
+        verifiedUser,
+    })
 }
-    module.exports = { register, verify };
+
+const login = async (req, res) => {
+  // console.log(req.body);
+  const { email, password } = req.body;
+  
+  const user = await userModel.findOne({ email });
+  // console.log(user);
+  if (!user) {
+    res.status(404).send({ message: "user not found" });
+    return;
+  }
+  const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+  if (!isPasswordCorrect) {
+    res.status(401).send({ message: "invalid credentials" });
+    return;
+  }
+  // console.log(isPasswordCorrect);
+
+  const token = jwt.sign(
+    {
+      userId: user._id,
+      email: user.email
+    },
+    process.env.WT_SECRET
+  );
+  // console.log(token);
+  res.send({
+    message: "user connect successfully",
+    token
+  });
+};
+
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+  
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).send({ message: "Utilisateur introuvable" });
+    }
+  
+    const otp = genererNombreAleatoire();
+    const otpToken = v4();
+  
+    await otpModel.create({
+      userId: user._id,
+      otp,
+      otpToken,
+      purpose: "reset-password"
+    });
+  
+    transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Réinitialisation de mot de passe",
+      html: `
+        <h1>Réinitialisation de mot de passe</h1>
+        <p>Voici le code pour réinitialiser votre mot de passe :</p>
+        <strong>${otp}</strong>
+      `
+    });
+  
+    res.send({
+      message: "Code de réinitialisation envoyé",
+      otpToken
+    });
+  };
+
+  const resetPassword = async (req, res) => {
+    const { otp, otpToken, purpose, newPassword } = req.body;
+
+    if (purpose != "reset-password") {
+      return res.status(422).send({ message: "Purpose invalide" });
+    }
+  
+    const otpDetails = await otpModel.findOne({
+      otpToken,
+      purpose
+    });
+  
+    if (!otpDetails || otp !== otpDetails.otp) {
+      return res.status(400).send({ message: "OTP invalide" });
+    }
+  
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+  
+    const user = await userModel.findByIdAndUpdate(
+      otpDetails.userId,
+      { password: hashedPassword },
+      { new: true }
+    );
+  
+    res.send({ message: "Mot de passe réinitialisé avec succès", user });
+  };
+  
+
+
+module.exports = { register, login, verify, forgotPassword, resetPassword }

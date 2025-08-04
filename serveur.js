@@ -1,20 +1,16 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
+const productsRouter = require("./routers/productRouter");
 
-<<<<<<< HEAD
-const studentRouter = require("./routers/productRouter");
 const userRouter = require("./routers/userRouter");
 
 const app = express();
-const PORT = process.env.PORT;
-=======
-// const productRouter = require("./routers/productRouter");
-const userRouter = require("./routers/userRouter");
+const PORT = process.env.PORT || 3000;
 
-const app = express();
-const PORT = process.env.PORT || 5000;
->>>>>>> a1867ab (voici les ficher utils)
+app.use(cors());
+app.use(express.json());
 
 // Connect to MongoDB database
 mongoose
@@ -31,19 +27,10 @@ app.use(express.json());
 
 // Router
 
-<<<<<<< HEAD
-app.use("/students", studentRouter);
-=======
-// app.use("/products", productRouter);
->>>>>>> a1867ab (voici les ficher utils)
+app.use("/products", productsRouter);
 app.use("/users", userRouter);
 
 // Expose the server on the defined port
 app.listen(PORT, () => {
-<<<<<<< HEAD
   console.log(`Server listening on port ${PORT}`);
 });
-=======
-  console.log(`Server running on port ${PORT}`);
-});
->>>>>>> a1867ab (voici les ficher utils)

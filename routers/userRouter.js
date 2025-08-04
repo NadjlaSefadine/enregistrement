@@ -1,11 +1,12 @@
 const express = require("express");
-const {register, login, verify} = require("../controllers/userControoler");
 const router = express.Router();
 
-// create un router aui permet d'ajouter un user
-router.post("/", register);
-router.post("/verify-email", verify);
-router.post("/login", login);
+const userController = require("../controllers/userController");
 
+router.post("/register", userController.register);
+router.post("/verify", userController.verify);
+router.post("/login", userController.login);
+router.post("/forgotPassword", userController.forgotPassword);
+router.post("/resetPassword", userController.resetPassword);
 
 module.exports = router;

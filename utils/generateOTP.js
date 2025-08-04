@@ -1,6 +1,7 @@
-const generateOTP = () => {
-    return Math.floor(Math.random() * 1000000);
-};
-// console.log(generateOTP());
+function genererNombreAleatoire() {
+    return Math.floor(Math.random() * 1000000); 
+}
+// console.log(genererNombreAleatoire());
 
-module.exports = generateOTP;
+
+module.exports = genererNombreAleatoire;
