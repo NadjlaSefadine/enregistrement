@@ -15,7 +15,7 @@ const getSingleProduct = async (req, res) => {
 
   const product = await productModel.findById(id); 
   
-
+  
   if (!product) {
     res.status(404).send({
       message: "Product not found.",
@@ -56,7 +56,7 @@ const updateProduct = async (req, res) => {
     res.status(404).send("Product does not exist");
     return;
   }
-
+  
   const updatedProduct = await productModel.findByIdAndUpdate(
     id,
     {
@@ -67,8 +67,8 @@ const updateProduct = async (req, res) => {
       new: true,
     }
   );
-
-const PORT = process.env.PORT;
+  const PORT = process.env.PORT;
+  
   res.send({
     message: "Product updated successfully",
     updatedProduct,

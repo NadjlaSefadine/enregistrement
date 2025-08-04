@@ -1,4 +1,4 @@
-const transporter = require("../utils/mailTransporter");
+const transporter = require("../utlis/mailTransporter");
 
 transporter.sendMail({
     from: process.env.EMAIL_USER,

@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 // La création de schéma du produit
-const ProductSchema = new mongoose.Schema(
+const ProductSchema = mongoose.Schema(
   {
     productName: {
       type: String,
