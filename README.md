@@ -36,19 +36,19 @@ Certaines routes liées aux produits nécessitent que l'utilisateur soit **conne
 - Un compte sur un service mail ( Gmail)
 
 ##  Structure du projet
-enregistrement/
-├──config/
-├──controllers/
-├── models/
-├── routes/
-├── tests/
-├── utils/
-├── .env
-├── serveur.js
-├── gitignore
-├──package-lock.json
-├── package.json
-└── README.md
+enregistrement/     
+├──config/      
+├──controllers/     
+├── models/     
+├── routes/     
+├── tests/      
+├── utils/      
+├── .env        
+├── serveur.js      
+├── gitignore       
+├──package-lock.json        
+├── package.json        
+└── README.md   
 
 ## Technologies utilisées
     Google slides
