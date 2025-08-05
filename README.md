@@ -51,7 +51,7 @@ enregistrement/
 └── README.md
 
 ## Technologies utilisées
-
+    Google slides
     Node.js
     Express
     MongoDB 
