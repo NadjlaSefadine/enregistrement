@@ -1,12 +1,22 @@
 const express = require("express");
+
+const {
+  register,
+  login,
+  verify,
+  deleteUser,
+  forgotPassword,
+  resetPassword,
+} = require("../controllers/userController");
+const authMiddleware = require("../middlewares/authMiddleware");
 const router = express.Router();
 
-const userController = require("../controllers/userController");
-
-router.post("/register", userController.register);
-router.patch("/verify", userController.verify);
-router.post("/login", userController.login);
-router.post("/forgot-password", userController.forgotPassword);
-router.patch("/reset-password", userController.resetPassword);
+router.post("/register", register);
+router.patch("/verify-email", verify);
+router.post("/login", login);
+router.delete("/delete", authMiddleware, deleteUser);
+// Routes de mot de passe
+router.post("/forgot-password", forgotPassword);
+router.patch("/reset-password", resetPassword);
 
 module.exports = router;

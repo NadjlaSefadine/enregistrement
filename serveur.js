@@ -9,7 +9,7 @@ const { set } = require("./utils/mailTransporter");
 const authMiddleware = require("./middlewares/authMiddleware");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -18,7 +18,7 @@ app.use(express.json());
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Successfully connected to database");
+    console.log("Connexion réussie à la base de données!");
   })
   .catch((error) => {
     console.error(error);
@@ -41,5 +41,5 @@ app.get("/test", authMiddleware,
 
 // Expose the server on the defined port
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Serveur écoute sur le port ${PORT}`);
 });

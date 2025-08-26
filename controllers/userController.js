@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const userModel = require("../models/userModel");
-const genererNombreAleatoire = require("../utlis/generateOTP");
+const genererNombreAleatoire = require("../utils/generateOTP");
 const { v4 } = require("uuid");
 const otpModel = require("../models/otpModel");
 const transporter  = require("../utils/mailTransporter");
@@ -55,7 +55,7 @@ const register = async (req, res) => {
 })
 
     res.send({
-        message: ("l'utilisateur est ajouté"),
+        message: ("l'utilisateur est ajouté avec succès"),
         otpToken,
         user
     });
@@ -66,7 +66,7 @@ const verify = async (req, res) => {
 
     if (purpose != "verify-email") {
         res.status(422).send({
-            message: "purpose invalid"
+            message: "objectif invalide"
         });
         return;
     }
@@ -78,7 +78,7 @@ const verify = async (req, res) => {
 
     if (otp != otpDetails.otp) {
         res.status(406).send({
-            message: "otp invalid"
+            message: "otp invalide"
         });
         return;
     }
@@ -89,7 +89,7 @@ const verify = async (req, res) => {
     );
 
     res.send({
-        message: "user successfuly verified",
+        message: "utilisateur vérifié avec succès",
         verifiedUser,
     })
 }
@@ -101,12 +101,12 @@ const login = async (req, res) => {
   const user = await userModel.findOne({ email });
   // console.log(user);
   if (!user) {
-    res.status(404).send({ message: "user not found" });
+    res.status(404).send({ message: "utilisateur introuvable" });
     return;
   }
   const isPasswordCorrect = bcrypt.compareSync(password, user.password);
   if (!isPasswordCorrect) {
-    res.status(401).send({ message: "invalid credentials" });
+    res.status(401).send({ message: "Informations d'identification invalides" });
     return;
   }
   // console.log(isPasswordCorrect);
@@ -120,7 +120,7 @@ const login = async (req, res) => {
   );
   // console.log(token);
   res.send({
-    message: "user connect successfully",
+    message: "Utilisateur connecté avec succès.",
     token
   });
 };
@@ -160,33 +160,75 @@ const forgotPassword = async (req, res) => {
     });
   };
 
-  const resetPassword = async (req, res) => {
-    const { otp, otpToken, purpose, newPassword } = req.body;
+  const deleteUser = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { password } = req.body;
 
-    if (purpose != "reset-password") {
-      return res.status(422).send({ message: "Purpose invalide" });
+    // Vérifier que l'utilisateur existe
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).send({ message: "Utilisateur non trouvé" });
     }
-  
+
+    // Vérifier le mot de passe
+    const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).send({ message: "Mot de passe incorrect" });
+    }
+
+    // Supprimer l'utilisateur et ses OTP associés
+    await userModel.findByIdAndDelete(userId);
+    await otpModel.deleteMany({ userId });
+
+    res.send({
+      message: "Utilisateur supprimé avec succès",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "Erreur lors de la suppression de l'utilisateur",
+      error: error.message,
+    });
+  }
+};
+
+
+
+  const resetPassword = async (req, res) => {
+  const { otp, otpToken, newPassword } = req.body;
+
+  try {
     const otpDetails = await otpModel.findOne({
       otpToken,
-      purpose
+      purpose: "reset-password",
     });
-  
-    if (!otpDetails || otp !== otpDetails.otp) {
-      return res.status(400).send({ message: "OTP invalide" });
+    if (!otpDetails) {
+      return res.status(404).send({ message: "OTP non trouvé" });
     }
-  
+
+    if (otp !== otpDetails.otp) {
+      return res.status(406).send({ message: "OTP invalide" });
+    }
+
     const hashedPassword = bcrypt.hashSync(newPassword, 10);
-  
-    const user = await userModel.findByIdAndUpdate(
-      otpDetails.userId,
-      { password: hashedPassword },
-      { new: true }
-    );
-  
-    res.send({ message: "Mot de passe réinitialisé avec succès", user });
-  };
-  
+    await userModel.findByIdAndUpdate(otpDetails.userId, {
+      password: hashedPassword,
+    });
+
+    await otpModel.findByIdAndDelete(otpDetails._id);
+
+    res.send({
+      message: "Mot de passe est réinitialisé! ",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "Echec de réinitialisation du mot de passe",
+      error: error.message,
+    });
+  }
+};
 
 
-module.exports = { register, login, verify, forgotPassword, resetPassword }
+module.exports = { register, login, verify, forgotPassword, resetPassword, deleteUser }
