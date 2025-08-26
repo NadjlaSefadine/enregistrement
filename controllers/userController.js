@@ -116,7 +116,7 @@ const login = async (req, res) => {
       userId: user._id,
       email: user.email
     },
-    process.env.WT_SECRET
+    process.env.JWT_SECRET
   );
   // console.log(token);
   res.send({

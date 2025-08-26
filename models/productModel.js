@@ -18,11 +18,16 @@ const ProductSchema = mongoose.Schema(
       default: "en-stock",
       required: true,
     },
+    userId:{
+      type:mongoose.Types.ObjectId,
+      required:true
+    }
   },
   {
     timestamps: true,
   }
 );
+
 
 // On envoie le schéma dans la base de données
 const Product = mongoose.model("Product", ProductSchema);

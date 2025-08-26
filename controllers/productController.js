@@ -29,6 +29,7 @@ const getSingleProduct = async (req, res) => {
 // L'ajout d'un nouveau produit
 const addProduct = async (req, res) => {
   const product = req.body;
+console.log(req,decoded);
 
   try {
     await productModel.create(product);
@@ -76,7 +77,7 @@ const updateProduct = async (req, res) => {
 };
 
 // La suppression d'un produit par son id
-const deletedeProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   const id = req.params.id;
 
   const deletedeProduct = await productModel.findByIdAndDelete(id);
@@ -100,5 +101,5 @@ module.exports = {
   getSingleProduct,
   addProduct,
   updateProduct,
-  deletedeProduct,
+  deleteProduct,
 };
